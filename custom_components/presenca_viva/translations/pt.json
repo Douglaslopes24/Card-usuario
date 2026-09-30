@@ -1,0 +1,60 @@
+{
+  "title": "Presença Viva",
+  "config": {
+    "step": {
+      "user": {
+        "title": "Seu personagem no Home Assistant",
+        "description": "Escolha um nome. Vincule sensores existentes para o modo Automático, ou deixe os campos opcionais vazios e use o seletor manual. Não perturbe aceita on, priority_only, alarms_only e total_silence. Atividade aceita caminhada, corrida, bicicleta e veículo nos estados padrão do app Companion.",
+        "data": {
+          "name": "Nome do perfil",
+          "person_entity": "Pessoa ou rastreador (opcional)",
+          "dnd_entity": "Sensor Não perturbe (opcional)",
+          "transit_entity": "Sensor Em trânsito / atividade (opcional)",
+          "media_player_entity": "Reprodutor de música (opcional)",
+          "battery_entity": "Bateria do celular (opcional)",
+          "steps_entity": "Passos do celular (opcional)",
+          "headphones": "Fones no estado Disponível"
+        }
+      }
+    },
+    "error": {
+      "name_required": "Digite um nome para o perfil."
+    }
+  },
+  "options": {
+    "step": {
+      "init": {
+        "title": "Ajustar sensores e personagem",
+        "description": "Os campos são opcionais. Apague uma seleção para desvincular a entidade.",
+        "data": {
+          "name": "Nome do perfil",
+          "person_entity": "Pessoa ou rastreador (opcional)",
+          "dnd_entity": "Sensor Não perturbe (opcional)",
+          "transit_entity": "Sensor Em trânsito / atividade (opcional)",
+          "media_player_entity": "Reprodutor de música (opcional)",
+          "battery_entity": "Bateria do celular (opcional)",
+          "steps_entity": "Passos do celular (opcional)",
+          "headphones": "Fones no estado Disponível"
+        }
+      }
+    },
+    "error": {
+      "name_required": "Digite um nome para o perfil."
+    }
+  },
+  "entity": {
+    "sensor": {
+      "status": {
+        "name": "Estado",
+        "state": {
+          "available": "Disponível",
+          "away": "Ausente",
+          "do_not_disturb": "Não perturbe",
+          "unavailable": "Indisponível",
+          "in_transit": "Em trânsito",
+          "listening": "Ouvindo música"
+        }
+      }
+    }
+  }
+}

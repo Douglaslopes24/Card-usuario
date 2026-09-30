@@ -1,0 +1,60 @@
+{
+  "title": "Presença Viva",
+  "config": {
+    "step": {
+      "user": {
+        "title": "Your character in Home Assistant",
+        "description": "Select existing entities for automatic status, or leave optional fields empty to use manual mode.",
+        "data": {
+          "name": "Profile name",
+          "person_entity": "Person or tracker (optional)",
+          "dnd_entity": "Do not disturb sensor (optional)",
+          "transit_entity": "Transit or activity sensor (optional)",
+          "media_player_entity": "Music player (optional)",
+          "battery_entity": "Phone battery (optional)",
+          "steps_entity": "Phone steps (optional)",
+          "headphones": "Headphones in Available state"
+        }
+      }
+    },
+    "error": {
+      "name_required": "Enter a profile name."
+    }
+  },
+  "options": {
+    "step": {
+      "init": {
+        "title": "Configure sensors and character",
+        "description": "Clear an optional field to unlink its entity.",
+        "data": {
+          "name": "Profile name",
+          "person_entity": "Person or tracker (optional)",
+          "dnd_entity": "Do not disturb sensor (optional)",
+          "transit_entity": "Transit or activity sensor (optional)",
+          "media_player_entity": "Music player (optional)",
+          "battery_entity": "Phone battery (optional)",
+          "steps_entity": "Phone steps (optional)",
+          "headphones": "Headphones in Available state"
+        }
+      }
+    },
+    "error": {
+      "name_required": "Enter a profile name."
+    }
+  },
+  "entity": {
+    "sensor": {
+      "status": {
+        "name": "Status",
+        "state": {
+          "available": "Available",
+          "away": "Away",
+          "do_not_disturb": "Do not disturb",
+          "unavailable": "Unavailable",
+          "in_transit": "In transit",
+          "listening": "Listening to music"
+        }
+      }
+    }
+  }
+}

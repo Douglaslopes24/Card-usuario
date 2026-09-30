@@ -1,0 +1,30 @@
+<!doctype html>
+<html lang="pt-BR">
+<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Presença Viva · Prévia</title>
+<style>
+:root{color-scheme:dark;--ha-card-border-radius:28px}*{box-sizing:border-box}body{margin:0;font-family:system-ui,sans-serif;background:#0c1828;color:#f1f7ff}main{max-width:1080px;margin:auto;padding:36px 28px 40px}header{margin-bottom:28px}.eyebrow{font-size:11px;font-weight:600;letter-spacing:2px;color:#8bb6d6}h1{font-size:32px;letter-spacing:-1px;margin:8px 0}header p{font-size:14px;line-height:1.6;color:#9db4ca;margin:8px 0}.layout{display:grid;grid-template-columns:380px 1fr;gap:38px;align-items:center}.options{display:grid;gap:20px}h2{font-size:18px;margin:0 0 10px}.states{display:grid;grid-template-columns:1fr 1fr;gap:8px}button{border:1px solid #365069;border-radius:12px;padding:13px 10px;background:#14283e;color:#cce3f5;font:600 13px system-ui;cursor:pointer}button.active{background:#d8f1ff;color:#163a57;border-color:#d8f1ff}p{font-size:13px;line-height:1.7;color:#9db4ca}.caption{font-size:11px;margin-top:15px;color:#819db6}code{background:#172f45;border-radius:6px;padding:2px 6px}label{display:flex;gap:10px;font-size:13px;color:#cce3f5;align-items:center}footer{margin-top:26px;border-top:1px solid #243b50;padding-top:15px;color:#708aa0;font-size:11px} @media(max-width:760px){main{padding:24px 18px}.layout{grid-template-columns:1fr;gap:25px}presenca-viva-card{max-width:400px;width:100%;margin:auto}h1{font-size:28px}}
+</style>
+<main>
+ <header><span class="eyebrow">HOME ASSISTANT · CARD PERSONALIZADO</span><h1>Presença Viva</h1><p>O seu personagem acompanha o seu dia.<br>Seis estados, transições suaves e controle pelo Home Assistant.</p></header>
+ <div class="layout"><div><presenca-viva-card id="card"></presenca-viva-card><div class="caption">Prévia do card real · entidades simuladas para demonstração</div></div>
+ <div class="options"><section><h2>Experimente os estados</h2><div class="states" id="states"></div></section><label><input type="checkbox" id="motion" checked>Animações leves</label><label><input type="checkbox" id="headphones" checked>Fones no estado Disponível</label><label><input type="checkbox" id="metrics">Mostrar bateria e passos</label><label><input type="checkbox" id="music">Mostrar música</label><p>As faixas da imagem original foram removidas. Bateria, passos e música só aparecem se você ativar essas opções.</p><p>Use o botão do card para escolher um estado manual. No modo <code>Automático</code>, a integração acompanha a pessoa e os sensores que você vincular.</p></div></div>
+ <footer>Presença Viva 1.0.0 · Ilustrações baseadas na sua referência · Sem dependências externas no card</footer>
+</main>
+<script src="custom_components/presenca_viva/frontend/presenca-viva-card.js"></script>
+<script>
+// The real dashboard supplies ha-icon; this local preview uses a small stand-in.
+if(!customElements.get('ha-icon'))customElements.define('ha-icon',class extends HTMLElement{connectedCallback(){this.innerHTML='<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" aria-hidden="true"><path d="M3 6h18M3 12h18M3 18h18"/><path d="M8 3v6M16 9v6M10 15v6" stroke-width="3"/></svg>';}});
+const labels={available:'Disponível',away:'Ausente',do_not_disturb:'Não perturbe',unavailable:'Indisponível',in_transit:'Em trânsito',listening:'Ouvindo música'};
+let current='available',mode='Automático';
+const card=document.querySelector('#card');
+function refresh(){
+ card.setConfig({type:'custom:presenca-viva-card',entity:'sensor.maicon_estado',name:'Maicon',asset_base:new URL('custom_components/presenca_viva/frontend',location.href).href,height:540,animations:document.querySelector('#motion').checked,headphones:document.querySelector('#headphones').checked,show_metrics:document.querySelector('#metrics').checked,show_music:document.querySelector('#music').checked});
+ card.hass={states:{'sensor.maicon_estado':{entity_id:'sensor.maicon_estado',state:current,attributes:{name:'Maicon',presenca_viva:true,mode,mode_entity:'select.maicon_modo',battery_entity:'sensor.battery',steps_entity:'sensor.steps',media_player_entity:'media_player.phone'}},'select.maicon_modo':{state:mode,attributes:{}},'sensor.battery':{state:'88',attributes:{friendly_name:'Bateria'}},'sensor.steps':{state:'582',attributes:{friendly_name:'Passos'}},'media_player.phone':{state:current==='listening'?'playing':'paused',attributes:{media_title:'Don’t You (Forget About Me)',media_artist:'Simple Minds'}}},callService:async(domain,service,data)=>{mode=data.option;if(mode!=='Automático')current=Object.keys(labels).find(key=>labels[key]===mode)||'available';refresh();}};
+ document.querySelectorAll('[data-state]').forEach(button=>button.classList.toggle('active',button.dataset.state===current));
+}
+for(const [key,label]of Object.entries(labels)){const button=document.createElement('button');button.textContent=label;button.dataset.state=key;button.onclick=()=>{current=key;mode='Automático';refresh();};document.querySelector('#states').append(button);}
+for(const input of document.querySelectorAll('input'))input.onchange=refresh;
+window.previewRefresh=refresh;window.previewSetState=key=>{current=key;mode='Automático';refresh();};refresh();
+</script>
+</html>

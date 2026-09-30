@@ -1,0 +1,9 @@
+__pycache__/
+*.py[cod]
+.pytest_cache/
+.venv/
+node_modules/
+qa/
+.coverage
+custom_components/presenca_viva/frontend/assets/*.png
+previews/*.png

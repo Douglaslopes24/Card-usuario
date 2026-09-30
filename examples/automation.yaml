@@ -1,0 +1,14 @@
+# Exemplo opcional: fixa o estado sem alterar o celular.
+# O sensor da integração também pode ser usado como gatilho para automações.
+alias: Presença Viva - Não perturbe ao ativar foco
+triggers:
+  - trigger: state
+    entity_id: input_boolean.foco
+    to: "on"
+actions:
+  - action: select.select_option
+    target:
+      entity_id: select.maicon_modo
+    data:
+      option: Não perturbe
+mode: single

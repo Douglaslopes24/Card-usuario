@@ -1,0 +1,14 @@
+type: custom:presenca-viva-card
+entity: sensor.maicon_estado
+name: Maicon
+height: 540
+animations: true
+headphones: true
+show_controls: true
+show_metrics: true
+show_music: true
+# Estes nomes são exemplos. Substitua pelos seus ou remova as linhas para
+# usar as entidades que já foram escolhidas na integração.
+battery_entity: sensor.seu_celular_battery_level
+steps_entity: sensor.seu_celular_steps
+media_player_entity: media_player.seu_reprodutor

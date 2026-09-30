@@ -1,0 +1,8 @@
+type: custom:presenca-viva-card
+entity: sensor.maicon_estado # substitua pela entidade Estado criada na sua instalação
+name: Maicon
+height: 500
+animations: true
+show_controls: true
+show_metrics: false
+show_music: false

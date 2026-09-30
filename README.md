@@ -1,6 +1,6 @@
 # Presença Viva · Home Assistant
 
-![Prévia do card](previews/preview-mobile.png)
+![Prévia do card](previews/preview-mobile.webp)
 
 Integração local e card personalizado com o personagem da sua referência.
 O pacote inclui seis ilustrações com fundo transparente: disponível com fones,
@@ -49,7 +49,7 @@ oficial do HACS. Seu sensor Estado é escolhido no editor visual do card.
 ## Se o card não aparecer
 
 - Confirme que `/config/custom_components/presenca_viva/manifest.json` existe
-  e que a pasta `frontend/assets` contém as seis imagens `.png`.
+  e que a pasta `frontend/assets` contém as seis imagens `.webp`.
 - Confirme que a integração foi adicionada depois de reiniciar o Home Assistant.
 - Atualize o navegador ou limpe o cache do frontend no aplicativo Companion.
 - Em **Configurações → Painéis → menu ⋮ → Recursos**, adicione, se necessário:
@@ -140,6 +140,7 @@ Para valores de atividade diferentes, crie um sensor de modelo ou um
 ## Personalização das imagens
 
 As seis imagens estão em `custom_components/presenca_viva/frontend/assets`.
+No repositório, o card usa versões WebP para reduzir o tamanho do download.
 Você pode usar as ilustrações separadamente em outros cards.
 Para indicar outras imagens neste card, use caminhos locais em `images:`:
 
