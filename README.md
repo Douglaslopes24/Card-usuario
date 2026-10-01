@@ -28,7 +28,10 @@ e música ficam desativados por padrão e podem ser ativados no editor.
 7. Edite o painel, clique em **Adicionar cartão** e procure **Presença Viva**.
    No editor visual, escolha o sensor **Estado** criado pela integração.
 
-O card é carregado automaticamente ao configurar a integração.
+O card é servido assim que a integração é carregada. O módulo é registrado
+automaticamente no frontend e também em **Recursos** dos painéis com recursos
+em modo armazenamento. Em painéis com recursos em YAML, a lista do usuário
+é preservada e o módulo adicional continua disponível no frontend padrão.
 Home Assistant **2026.1 ou posterior** é o alvo deste pacote. A validação
 automatizada foi executada em **2026.9.4**; a versão mínima não foi testada.
 
@@ -39,30 +42,63 @@ automatizada foi executada em **2026.9.4**; a versão mínima não foi testada.
    **Integração**.
 3. Procure **Presença Viva** no HACS e baixe.
 4. Reinicie o Home Assistant e adicione a integração **Presença Viva** em
-   **Configurações → Dispositivos e serviços**.
+   **Configurações → Dispositivos e serviços → Adicionar integração**.
+   Baixar pelo HACS instala os arquivos; esta etapa configura o perfil e
+   carrega a integração. Crie o perfil com o nome **Maicon**, por exemplo.
 5. Atualize o painel e adicione o cartão **Presença Viva**. O JavaScript do
-   card vem junto com a integração e é registrado automaticamente.
+   card vem junto com a integração e é registrado automaticamente, inclusive
+   na lista de Recursos dos painéis em modo armazenamento.
 
 Este é um repositório personalizado; a integração não faz parte do catálogo
 oficial do HACS. Seu sensor Estado é escolhido no editor visual do card.
 
 ## Se o card não aparecer
 
-- Confirme que `/config/custom_components/presenca_viva/manifest.json` existe
-  e que a pasta `frontend/assets` contém as seis imagens `.webp`.
-- Confirme que a integração foi adicionada depois de reiniciar o Home Assistant.
-- Atualize o navegador ou limpe o cache do frontend no aplicativo Companion.
-- Em **Configurações → Painéis → menu ⋮ → Recursos**, adicione, se necessário:
-  URL **`/presenca_viva/presenca-viva-card.js?v=1.0.0`**, tipo **Módulo JavaScript**.
-  A tela de Recursos pode exigir o modo avançado no seu perfil.
-- Abra essa URL no navegador do seu Home Assistant. Ela deve mostrar JavaScript,
-  não uma página de erro. Se mostrar erro, confira os logs da integração.
-- Para um painel em modo YAML, adicione o mesmo recurso em `resources:`
-  na configuração Lovelace, usando `type: module`.
+A mensagem **Custom element doesn't exist: presenca-viva-card** significa que
+o navegador ainda não registrou o componente do card. O YAML do cartão não
+resolve o carregamento do JavaScript. Siga estas etapas:
+
+1. No HACS, abra **Presença Viva → menu ⋮ → Baixar novamente** e selecione
+   **main** se a versão aparecer como opção. A correção está na **1.0.1**.
+   Na instalação manual, substitua a pasta inteira da integração pela atual.
+2. Reinicie o Home Assistant. Confira se **Presença Viva** já aparece em
+   **Configurações → Dispositivos e serviços**. Se ainda não foi configurada,
+   use **Adicionar integração → Presença Viva** e crie o perfil.
+3. Atualize completamente a página do painel (`Ctrl+F5` no computador) ou
+   limpe o cache do frontend no aplicativo Companion e reabra o painel.
+4. Se a mensagem continuar, abra **Configurações → Painéis → menu ⋮ → Recursos**.
+   Adicione ou edite o recurso do Presença Viva, com:
+   - URL: `/presenca_viva/presenca-viva-card.js?v=1.0.1`
+   - Tipo: **Módulo JavaScript**
+   A tela de Recursos pode exigir o modo avançado no seu perfil.
+   Depois atualize a página novamente.
+
+Abra o caminho do recurso no mesmo endereço do seu Home Assistant para
+conferir o download. Ele deve mostrar JavaScript. Se retornar **404**, a
+integração não está servindo os arquivos: confirme que foi configurada e
+verifique seus logs em **Configurações → Sistema → Logs**. Confira também
+`/config/custom_components/presenca_viva/manifest.json` e a pasta
+`frontend/assets`, que deve conter as seis imagens `.webp`.
+
+Para recursos em YAML, declare em `configuration.yaml`:
+
+```yaml
+lovelace:
+  resources:
+    - url: /presenca_viva/presenca-viva-card.js?v=1.0.1
+      type: module
+```
+
+Se já existe uma seção `lovelace:`, acrescente o recurso nela, sem duplicar
+a seção. Reinicie ou recarregue os recursos YAML e atualize o painel.
 
 O registro do componente tem proteção contra carregamento duplicado.
 O recurso manual também é útil em clientes que não carregam módulos extras,
 como algumas configurações de Cast; esses clientes não foram testados.
+
+Na versão 1.0.1, o registro em Recursos é criado automaticamente e recursos
+antigos com o mesmo caminho local são atualizados para a nova versão.
+Outros cartões e os recursos declarados em YAML são preservados.
 
 ## Configuração do card
 

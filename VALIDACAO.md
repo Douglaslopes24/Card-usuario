@@ -1,4 +1,42 @@
-# Validação da versão 1.0.0
+# Validação da versão 1.0.1
+
+## Correção do carregamento do card · 01/10/2026
+
+**35 testes aprovados** com Home Assistant Core **2026.9.4**, Python
+**3.14.7** e `pytest-homeassistant-custom-component` **0.13.367**.
+Resultado: `35 passed in 1.26s`.
+
+O JavaScript e os arquivos estáticos agora são registrados no carregamento
+da integração, antes da criação do perfil. O card também é registrado como
+módulo na coleção de Recursos do Lovelace em modo armazenamento. URLs
+antigas desse mesmo recurso local são atualizadas para `?v=1.0.1`, preservando
+o ID e os demais recursos. A lista de recursos YAML permanece intacta.
+
+Os cinco testes novos conferem:
+
+- Recurso e JavaScript acessíveis por HTTP antes de configurar um perfil.
+- Atualização de um recurso manual antigo, sem duplicação nem alteração
+  de outro card.
+- Vários perfis compartilhando um único recurso.
+- Preservação dos recursos YAML com o módulo adicional disponível.
+- Perfil e módulo continuando disponíveis se o registro em Recursos falhar.
+
+A sintaxe do JavaScript foi verificada com `node --check`. A lógica e a
+aparência do card permanecem iguais; somente a identificação da versão
+mudou no JavaScript. O script de teste visual foi atualizado para o caminho
+WebP da pose sem fones e o tipo de conteúdo `image/webp`.
+
+Uma nova execução visual não foi concluída nesta revisão: o download do
+navegador retornou HTML em vez do arquivo ZIP. Os resultados visuais abaixo
+são os da validação anterior, enquanto os 35 testes de integração e a
+verificação de sintaxe acima foram executados nesta versão.
+
+Não houve acesso ao servidor Home Assistant do usuário. A captura enviada
+mostra o componente ausente no frontend, mas não permite distinguir sozinha
+entre integração ainda não configurada, recurso ausente e cache do cliente.
+O README contém os passos de instalação e de verificação do recurso.
+
+## Validação anterior · versão 1.0.0
 
 Executada em 30/09/2026, em ambiente de teste isolado.
 
@@ -44,8 +82,8 @@ As capturas de tela mostram a execução do card real na prévia.
 
 ## Limites da validação
 
-Não houve conexão com o servidor Home Assistant do usuário, nem instalação
-ou publicação no GitHub. A versão mínima anunciada (2026.1) é um alvo de
+Não houve conexão nem instalação no servidor Home Assistant do usuário.
+O código foi publicado no GitHub. A versão mínima anunciada (2026.1) é um alvo de
 compatibilidade, não um resultado de teste. Cast, sensores específicos do
 celular e outras versões do Home Assistant não foram testados.
 Os estados de atividade e Não perturbe precisam corresponder aos valores

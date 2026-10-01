@@ -2,11 +2,15 @@ from unittest.mock import patch
 
 import pytest
 from homeassistant.components.frontend import DATA_EXTRA_MODULE_URL
+from homeassistant.components.lovelace.const import DOMAIN as LOVELACE_DOMAIN
+from homeassistant.components.lovelace.resources import ResourceYAMLCollection
 from homeassistant.data_entry_flow import FlowResultType
 from homeassistant.setup import async_setup_component
 from pytest_homeassistant_custom_component.common import MockConfigEntry, mock_restore_cache
 from homeassistant.core import State
+from homeassistant.exceptions import HomeAssistantError
 
+from custom_components.presenca_viva import CARD_URL, _async_setup_frontend
 from custom_components.presenca_viva.const import DOMAIN
 
 
@@ -52,7 +56,7 @@ async def test_entities_and_automatic_states(hass, profile):
     assert sensor.state == "available"
     assert select.state == "Automático"
     assert sensor.attributes["mode_entity"] == select.entity_id
-    assert "/presenca_viva/presenca-viva-card.js?v=1.0.0" in hass.data[DATA_EXTRA_MODULE_URL].urls
+    assert CARD_URL in hass.data[DATA_EXTRA_MODULE_URL].urls
     for entity, value, expected in [("person.maicon", "not_home", "away"), ("sensor.activity", "in_vehicle", "in_transit"), ("input_boolean.dnd", "on", "do_not_disturb"), ("person.maicon", "unavailable", "unavailable")]:
         hass.states.async_set(entity, value)
         await hass.async_block_till_done()
@@ -126,3 +130,69 @@ async def test_assets_served(hass, profile, hass_client):
         response = await client.get(path)
         assert response.status == 200
         assert len(await response.read()) > 1000
+
+
+async def test_card_available_before_profile(hass, hass_client):
+    """The module is served and discoverable even before entities are set up."""
+    assert await async_setup_component(hass, DOMAIN, {})
+    await hass.async_block_till_done()
+    assert not hass.config_entries.async_entries(DOMAIN)
+    resources = hass.data[LOVELACE_DOMAIN].resources.async_items()
+    assert [{"url": item["url"], "type": item["type"]} for item in resources] == [
+        {"url": CARD_URL, "type": "module"}
+    ]
+    assert CARD_URL in hass.data[DATA_EXTRA_MODULE_URL].urls
+    response = await (await hass_client()).get(CARD_URL)
+    assert response.status == 200
+    assert 'customElements.define("presenca-viva-card"' in await response.text()
+
+
+async def test_existing_resource_updated_without_duplicates(hass):
+    """An older manual registration is upgraded instead of being duplicated."""
+    assert await async_setup_component(hass, "frontend", {})
+    resources = hass.data[LOVELACE_DOMAIN].resources
+    old = await resources.async_create_item({
+        "url": "/presenca_viva/presenca-viva-card.js?v=1.0.0", "res_type": "js"
+    })
+    other = await resources.async_create_item({"url": "/local/another-card.js", "res_type": "module"})
+    assert await async_setup_component(hass, DOMAIN, {})
+    await _async_setup_frontend(hass)
+    items = resources.async_items()
+    assert len(items) == 2
+    assert next(item for item in items if item["id"] == old["id"]) == {
+        "id": old["id"], "url": CARD_URL, "type": "module"
+    }
+    assert other in items
+
+
+async def test_multiple_profiles_share_one_resource(hass, profile):
+    entry = MockConfigEntry(domain=DOMAIN, title="Outro", data={"name": "Outro"})
+    entry.add_to_hass(hass)
+    assert await hass.config_entries.async_setup(entry.entry_id)
+    await hass.async_block_till_done()
+    resources = hass.data[LOVELACE_DOMAIN].resources.async_items()
+    assert sum(item["url"] == CARD_URL for item in resources) == 1
+
+
+async def test_yaml_resources_preserved(hass):
+    """YAML dashboards retain their own resources and use the extra module."""
+    assert await async_setup_component(hass, "frontend", {})
+    original = [{"url": "/local/another-card.js", "type": "module"}]
+    hass.data[LOVELACE_DOMAIN].resources = ResourceYAMLCollection(original)
+    assert await async_setup_component(hass, DOMAIN, {})
+    assert hass.data[LOVELACE_DOMAIN].resources.async_items() == original
+    assert CARD_URL in hass.data[DATA_EXTRA_MODULE_URL].urls
+
+
+async def test_resource_error_keeps_profile_and_module_available(hass, hass_client):
+    """A dashboard storage error does not prevent the profile from loading."""
+    assert await async_setup_component(hass, "frontend", {})
+    resources = hass.data[LOVELACE_DOMAIN].resources
+    entry = MockConfigEntry(domain=DOMAIN, title="Maicon", data={"name": "Maicon"})
+    entry.add_to_hass(hass)
+    with patch.object(resources, "async_create_item", side_effect=HomeAssistantError("Resource storage error")):
+        assert await hass.config_entries.async_setup(entry.entry_id)
+        await hass.async_block_till_done()
+    assert states_for(hass, entry)[0].state == "available"
+    assert CARD_URL in hass.data[DATA_EXTRA_MODULE_URL].urls
+    assert (await (await hass_client()).get(CARD_URL)).status == 200

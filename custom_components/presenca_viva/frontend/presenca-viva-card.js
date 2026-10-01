@@ -1,4 +1,4 @@
-/* Presença Viva 1.0.0 — local, dependency-free Home Assistant card. */
+/* Presença Viva 1.0.1 — local, dependency-free Home Assistant card. */
 (() => {
   "use strict";
   const LABELS = { available: "Disponível", away: "Ausente", do_not_disturb: "Não perturbe", unavailable: "Indisponível", in_transit: "Em trânsito", listening: "Ouvindo música" };

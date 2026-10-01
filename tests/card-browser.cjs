@@ -7,7 +7,7 @@ const {chromium} = require(process.env.PLAYWRIGHT_MODULE || 'playwright');
 const root = path.resolve(__dirname, '..');
 const output = process.env.PRESENCA_QA_DIR || path.resolve(root, 'qa');
 fs.mkdirSync(output, {recursive:true});
-const mime = {'.html':'text/html','.js':'text/javascript','.png':'image/png','.json':'application/json'};
+const mime = {'.html':'text/html','.js':'text/javascript','.png':'image/png','.webp':'image/webp','.json':'application/json'};
 const server = http.createServer((req,res)=>{
   const filename = path.resolve(root, '.' + decodeURIComponent(new URL(req.url,'http://localhost').pathname));
   if(!filename.startsWith(root + path.sep) || !fs.existsSync(filename) || fs.statSync(filename).isDirectory()){res.writeHead(404);res.end();return;}
@@ -33,7 +33,7 @@ const server = http.createServer((req,res)=>{
     }
     await page.evaluate(()=>window.previewSetState('available'));
     await page.locator('#headphones').uncheck();
-    await page.waitForFunction(()=>document.querySelector('#card').shadowRoot.querySelector('.character.visible')?.src.endsWith('available_no_headphones.png'));
+    await page.waitForFunction(()=>document.querySelector('#card').shadowRoot.querySelector('.character.visible')?.src.endsWith('available_no_headphones.webp'));
     await page.locator('#headphones').check();
     await card.locator('.control').click();
     await card.getByRole('button',{name:'Não perturbe',exact:true}).click();

@@ -1,7 +1,7 @@
 """Constants shared by the local presence integration."""
 
 DOMAIN = "presenca_viva"
-VERSION = "1.0.0"
+VERSION = "1.0.1"
 ASSET_URL = "/presenca_viva"
 CONF_NAME = "name"
 SOURCE_KEYS = (

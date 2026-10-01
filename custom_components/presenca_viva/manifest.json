@@ -1,7 +1,7 @@
 {
   "domain": "presenca_viva",
   "name": "Presença Viva",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "codeowners": ["@Douglaslopes24"],
   "config_flow": true,
   "dependencies": ["frontend"],
